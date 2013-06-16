@@ -1,0 +1,36 @@
+﻿<Window x:Class="Napoleon_Exile.Statistic"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		Title="Статистика"
+		Height="300"
+		Width="300"
+		Icon="icon.ico">
+	<Grid>
+		<DataGrid ItemsSource="{Binding Players}"
+				  AutoGenerateColumns="False"
+				  IsReadOnly="True">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="ИМЯ"
+									Width="Auto"
+									IsReadOnly="True"
+									Binding="{Binding Path=PlayerName}" />
+				<DataGridTextColumn Header="ИГРА"
+									Width="Auto"
+									IsReadOnly="True"
+									Binding="{Binding Path=GameName}" />
+				<DataGridTextColumn Header="ОЧКИ"
+									Width="Auto"
+									IsReadOnly="True"
+									Binding="{Binding Path=Score}" />
+				<DataGridTextColumn Header="ХОДОВ"
+									Width="Auto"
+									IsReadOnly="True"
+									Binding="{Binding Path=Moves}" />
+				<DataGridTextColumn Header="В/П"
+									Width="Auto"
+									IsReadOnly="True"
+									Binding="{Binding Path=State}" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</Window>

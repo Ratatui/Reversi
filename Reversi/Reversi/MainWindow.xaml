@@ -1,0 +1,147 @@
+﻿<Window x:Class="Napoleon_Exile.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:v="clr-namespace:View;assembly=Napoleon"
+		Title="Реверси"
+		Height="350"
+		Width="525"
+		WindowState="Maximized"
+		Icon="icon.ico">
+	<Grid>
+		<Canvas x:Name="cnv"
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch">
+
+			<v:GameShape x:Name="gameShape"
+						 Width="{Binding ActualWidth, ElementName=cnv, Mode=OneWay}"
+						 Height="{Binding ActualHeight, ElementName=cnv, Mode=OneWay}" />
+			<Menu IsMainMenu="True"
+				  Background="Gray"
+				  Foreground="White"
+				  Width="{Binding ActualWidth, ElementName=cnv, Mode=OneWay}"
+				  Height="25"
+				  FontSize="16">
+				<MenuItem Header="Файл"
+						  BorderThickness="0">
+					<MenuItem Header="Новая игра"
+							  Background="Gray"
+							  BorderThickness="0"
+							  Click="MenuItem_Click">
+						<MenuItem.Icon>
+							<Image Width="20"
+								   Height="20"
+								   Source="Images/NewGame.png" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="Выход"
+							  Background="Gray"
+							  BorderThickness="0"
+							  Click="MenuItem_Click_1">
+						<MenuItem.Icon>
+							<Image Width="20"
+								   Height="20"
+								   Source="Images/ExitGame.png" />
+						</MenuItem.Icon>
+					</MenuItem>
+				</MenuItem>
+				<MenuItem Header="Игра"
+						  BorderThickness="0">
+					<MenuItem Header="Восстановить"
+							  Background="Gray"
+							  BorderThickness="0"
+							  x:Name="ReloadGame"
+							  Click="ReloadGame_Click">
+						<MenuItem.Icon>
+							<Image Width="20"
+								   Height="20"
+								   Source="Images/Reload Game.png" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="Отменить"
+							  Background="Gray"
+							  BorderThickness="0"
+							  x:Name="Back"
+							  Click="Back_Click">
+						<MenuItem.Icon>
+							<Image Width="20"
+								   Height="20"
+								   Source="Images/Back.png" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="Повторить"
+							  Background="Gray"
+							  BorderThickness="0"
+							  x:Name="Forward"
+							  Click="Forward_Click">
+						<MenuItem.Icon>
+							<Image Width="20"
+								   Height="20"
+								   Source="Images/Back.png" />
+						</MenuItem.Icon>
+					</MenuItem>
+				</MenuItem>
+				<MenuItem Header="Статистика"
+						  BorderThickness="0">
+					<MenuItem Header="Просмотр статистики"
+							  Background="Gray"
+							  BorderThickness="0"
+							  x:Name="Score"
+							  Click="Score_Click">
+						<MenuItem.Icon>
+							<Image Width="20"
+								   Height="20"
+								   Source="Images/NewGame.png" />
+						</MenuItem.Icon>
+					</MenuItem>
+				</MenuItem>
+				<MenuItem Header="Помощь"
+						  BorderThickness="0">
+					<MenuItem Header="Правила"
+							  Background="Gray"
+							  BorderThickness="0"
+							  x:Name="Rules"
+							  Click="Rules_Click">
+						<MenuItem.Icon>
+							<Image Width="20"
+								   Height="20"
+								   Source="Images/Rules.png" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="О программе"
+							  Background="Gray"
+							  BorderThickness="0"
+							  x:Name="AbouteBox"
+							  Click="AbouteBox_Click">
+						<MenuItem.Icon>
+							<Image Width="20"
+								   Height="20"
+								   Source="Images/About.png" />
+						</MenuItem.Icon>
+					</MenuItem>
+				</MenuItem>
+			</Menu>
+			<StatusBar Canvas.Bottom="0"
+					   Width="{Binding ActualWidth, ElementName=cnv, Mode=OneWay}"
+					   Background="Gray">
+				<TextBlock Text="Количество шагов:"
+						   Foreground="White"
+						   FontSize="14" />
+				<TextBlock Foreground="White"
+						   x:Name="TotalMoves" />
+				<Separator />
+				<TextBlock Text="Очки:"
+						   Foreground="White"
+						   FontSize="14" />
+				<TextBlock Foreground="White"
+						   x:Name="TotalScore" />
+				<TextBlock Text="Время:"
+						   Foreground="White"
+						   FontSize="14" />
+				<TextBlock Foreground="White"
+						   x:Name="TotalTime" />
+			</StatusBar>
+		</Canvas>
+
+	</Grid>
+
+</Window>

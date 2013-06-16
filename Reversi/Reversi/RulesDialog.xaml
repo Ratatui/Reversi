@@ -1,0 +1,14 @@
+﻿<Window x:Class="Napoleon_Exile.RulesDialog"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		Title="Правила"
+		Height="600"
+		Width="600"
+		ResizeMode="NoResize"
+		WindowStartupLocation="CenterScreen"
+		Icon="icon.ico">
+	<Grid>
+		<Image Source="Images/RulesInfo.png"
+			   Stretch="None" />
+	</Grid>
+</Window>
