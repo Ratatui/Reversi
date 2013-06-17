@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,10 +22,10 @@ namespace View
 	public partial class GameShape : UserControl
 	{
 
-		public int MoveCount { get; private set; }
-		public int Score { get; private set; }
+		public int MoveCount { get; set; }
+		public int Score { get; set; }
 		public TimeSpan gametime { get; set; }
-		List<GameState> Moves = new List<GameState>();
+		public List<GameState> Moves = new List<GameState>();
 
 		public GameShape()
 		{
@@ -40,7 +41,7 @@ namespace View
 
 		}
 
-		public void MakeMove(DekShape From, DekShape To, int Score, bool needflipback)
+		public void MakeMove(DekShape From, DekShape To, bool calcScore = false)
 		{
 			if (MoveCount != Moves.Count)
 			{
@@ -50,20 +51,34 @@ namespace View
 					Moves.RemoveAt(Moves.Count - 1);
 				}
 			}
-			Moves.Add(new GameState(From, To, needflipback, Score));
-			this.Score += Score;
-			MoveCount++;
+			List<CardShape> cards = new List<CardShape>();
+			while (From.Count > 0)
+			{
+				if (calcScore)
+					Score++;
+				var card = From.TopCardShape;
+				From.Remove(card);
+				To.Add(card);
+				cards.Add(card);
+			}
+			Moves.Add(new GameState(From, To, cards, MoveCount));
 		}
 
 		public void StepBack()
 		{
 			if (MoveCount > 0)
 			{
-				Score -= Moves[MoveCount - 1].Score;
-				Moves[MoveCount - 1].From.Add(Moves[MoveCount - 1].To.TopCardShape);
-				if (Moves[MoveCount - 1].NeedFlipBack)
+				foreach (var a in Moves)
 				{
-					Moves[MoveCount - 1].From.Deck.TopCard.Visible = false;
+					if (a.Score == (MoveCount))
+					{
+						foreach (var b in a.Cards)
+						{
+							a.To.Remove(b);
+							a.From.Add(b);
+							Score--;
+						}
+					}
 				}
 				MoveCount--;
 			}
@@ -73,10 +88,17 @@ namespace View
 		{
 			if (MoveCount < Moves.Count)
 			{
-				Moves[MoveCount].To.Add(Moves[MoveCount].From.TopCardShape);
-				if (Moves[MoveCount].NeedFlipBack)
+				foreach (var a in Moves)
 				{
-					Moves[MoveCount].From.Deck.TopCard.Visible = true;
+					if (a.Score == (MoveCount + 1))
+					{
+						foreach (var b in a.Cards)
+						{
+							a.From.Remove(b);
+							a.To.Add(b);
+							Score++;
+						}
+					}
 				}
 				MoveCount++;
 			}

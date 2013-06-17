@@ -24,9 +24,10 @@ namespace Napoleon_Exile
 	public partial class MainWindow : Window
 	{
 		double space = 40;
-		List<DekShape> stack = new List<DekShape>();
+
 		List<DekShape> ground = new List<DekShape>();
 		DekShape dealer = new DekShape();
+		DekShape stack = new DekShape();
 
 		DekShape oldDeck;
 		System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer();
@@ -40,6 +41,11 @@ namespace Napoleon_Exile
 			Canvas.SetTop(dealer, space);
 			Canvas.SetZIndex(dealer, 1);
 			cnv.Children.Add(dealer);
+
+			Canvas.SetLeft(stack, 10);
+			Canvas.SetTop(stack, space + 100);
+			Canvas.SetZIndex(stack, 1);
+			cnv.Children.Add(stack);
 
 			//Игровая зона
 			for (int i = 0; i < 3; i++)
@@ -71,11 +77,8 @@ namespace Napoleon_Exile
 			TotalScore.Text = gameShape.Score.ToString();
 			TotalMoves.Text = gameShape.MoveCount.ToString();
 			dealer.Clear();
-			
-			foreach (var d in stack)
-			{
-				d.Clear();
-			}
+			stack.Clear();
+
 			foreach (var d in ground)
 			{
 				d.Clear();
@@ -94,7 +97,6 @@ namespace Napoleon_Exile
 				}
 				deal.Shuffle(5);
 			}
-			deal.Shuffle(10);
 
 			//Добавляем в основную колоду
 			for (int i = 0; i < 104; i++)
@@ -103,111 +105,39 @@ namespace Napoleon_Exile
 				cp.Card = deal.TopCard;
 				deal.TakeTopCard();
 				cp.MouseLeftButtonDown += cp_MouseLeftButtonDown;
-				cp.PreviewMouseRightButtonDown += cp_PreviewMouseRightButtonDown;
 				//cp.MouseDoubleClick += cp_MouseDoubleClick;
-				cp.CardDragged += cp_CardDragged;
-				cp.MouseMove += cp_MouseMove;
 				dealer.Add(cp);
 			}
 
-			//разигрываем по 1 карты в стопку
-			//21
-			for (int j = 0; j < ground.Count; j++)
+			// по 1 карты в стопку
+			for (int i = 0; i < 3; i++)
 			{
-				ground[j].Add(dealer.TopCardShape);
+				bool visible = true;
+				for (int j = 0; j < 7; j++)
+				{
+					ground[(i * 7) + j].Add(dealer.TopCardShape);
+					ground[(i * 7) + j].Deck.TopCard.Visible = visible;
+					visible = !visible;
+				}
 			}
 
 			for (int j = 0; j < ground.Count; j++)
 			{
-				ground[j].Deck.FlipAllCards(true);
 				ground[j].Deck.TopCard.Enabled = true;
 				ground[j].Deck.TopCard.IsDragable = false;
 			}
 
 			dealer.Deck.MakeAllCardsDragable(false);
-			dealer.Deck.TopCard.Visible = true;
-			dealer.Deck.TopCard.IsDragable = true;
+			dealer.Deck.TopCard.Visible = false;
+			dealer.Deck.TopCard.IsDragable = false;
 			Canvas.SetZIndex(dealer, 0);
 			timer.Start();
-		}
-
-		void cp_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			CardShape current = sender as CardShape;
-			foreach (var d in stack)
-			{
-				if (d.Deck == current.Card.Deck)
-				{
-					oldDeck = d;
-					break;
-				}
-			}
-			foreach (var d in ground)
-			{
-				if (d.Deck == current.Card.Deck)
-				{
-					oldDeck = d;
-					break;
-				}
-			}
-			
-			current.IsEnabled = true;
-
-			//ищем куда можно переместить
-			if (current.Card.Rank == CardRank.Ace)
-			{
-				foreach (var d in stack)
-				{
-					if (d.Count == 0)
-					{
-						MakeMove(d, current, 10, false);
-						break;
-					}
-				}
-			}
-			else
-			{//если не туз
-				bool find = false;
-				foreach (var d in stack)
-				{
-					if (d.Count > 0)
-						if (current.Card.Suit == d.Deck.TopCard.Suit && current.Card.Rank > d.Deck.TopCard.Rank && current.Card.Rank != CardRank.Ace &&
-							(current.Card.Rank - d.Deck.TopCard.Rank == 1))
-						{
-							MakeMove(d, current, 10, false);
-							d.Deck.TopCard.IsDragable = false;
-							find = true;
-							break;
-						}
-				}
-				if (!find)
-				{
-					foreach (var d in ground)
-					{
-						if (current.Card.Rank < d.Deck.TopCard.Rank && current.Card.Rank != CardRank.Ace && (d.Deck.TopCard.Rank - current.Card.Rank == 1))
-						{//тузов кладем только в стэк
-							MakeMove(d, current, 0, false);
-							find = true;
-							break;
-						}
-					}
-				}
-				if (!find)
-				{
-					oldDeck.Remove(current);
-					oldDeck.Add(current);
-				}
-			}
 		}
 
 		private bool IsWon()
 		{
 			if (dealer.Count > 0) return false;
-			
-			foreach (var ds in stack)
-			{
-				if (ds.Deck.TopCard.Rank != CardRank.King) return false;
-			}
+
 			foreach (var dg in ground)
 			{
 				if (dg.Count > 0) return false;
@@ -215,154 +145,115 @@ namespace Napoleon_Exile
 			return true;
 		}
 
-		private void MakeMove(DekShape d, CardShape shape, int score, bool needflipback)
+		private void MakeMove(DekShape From, DekShape To, bool calcScore = false)
 		{
-			oldDeck.Remove(shape);
-			d.Add(shape);
-			d.Deck.TopCard.IsDragable = true;
-
-			gameShape.MakeMove(oldDeck, d, score, needflipback);
+			gameShape.MakeMove(From, To, calcScore);
+			stack.Deck.TopCard.Visible = true;
 			TotalScore.Text = gameShape.Score.ToString();
 			TotalMoves.Text = gameShape.MoveCount.ToString();
-		}
-
-		void cp_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (oldDeck != null)
-				Canvas.SetZIndex(oldDeck, 300);
-
-		}
-
-		void cp_CardDragged(CardShape shape)
-		{
-			double dx = (Canvas.GetLeft(shape) + Canvas.GetLeft((UIElement)((Canvas)shape.Parent).Parent));
-			double dy = (Canvas.GetTop(shape) + Canvas.GetTop((UIElement)((Canvas)shape.Parent).Parent));
-
-			Rect rs = new Rect(dx, dy, CardShape.CardWidth, CardShape.CardHeight);
-			bool find = false;
-			foreach (var d in stack)
-			{//ищем перемещение в стэк
-				Rect r = new Rect(Canvas.GetLeft(d), Canvas.GetTop(d), CardShape.CardWidth, CardShape.CardHeight + d.CardSpace * d.Count);
-				if (rs.IntersectsWith(r))
-				{
-					find = true;
-					//правила. если колода пустая и мы кладем туза, то все хорошо
-					if (d.Count == 0)
-					{
-						if (shape.Card.Rank == CardRank.Ace)
-						{
-							MakeMove(d, shape, 10, false);
-							d.IsEnabled = false;
-							break;
-						}
-					}
-					else if (shape.Card.Suit == d.Deck.TopCard.Suit && shape.Card.Rank > d.Deck.TopCard.Rank && shape.Card.Rank != CardRank.Ace &&
-						(shape.Card.Rank - d.Deck.TopCard.Rank == 1))
-					{
-						MakeMove(d, shape, 10, false);
-						d.Deck.TopCard.IsDragable = false;
-						break;
-					}
-					find = false;
-					break;
-				}
-			}
-			if (!find)
-			{//если не в стэк, то может игровые
-				foreach (var d in ground)
-				{
-					Rect r = new Rect(Canvas.GetLeft(d), Canvas.GetTop(d), CardShape.CardWidth, CardShape.CardHeight + d.CardSpace * d.Count);
-					if (rs.IntersectsWith(r))
-					{
-						find = true;
-						//правила. если колода пустая можно класть все, что угодно
-						if (d.Count == 0)
-						{
-							MakeMove(d, shape, 0, false);
-							//d.IsEnabled = false;
-							break;
-						}
-						else if (shape.Card.Rank < d.Deck.TopCard.Rank && shape.Card.Rank != CardRank.Ace && (d.Deck.TopCard.Rank - shape.Card.Rank == 1))
-						{//тузов кладем только в стэк
-							MakeMove(d, shape, 0, false);
-							break;
-						}
-						find = false;
-						break;
-					}
-				}
-			}
-			if (!find)
-			{//если не можем переместить, то возвращаем в старую колоду
-				oldDeck.Remove(shape);
-				oldDeck.Add(shape);
-			}
-			else
-			{
-
-				if (dealer.Deck.TopCard != null)
-				{//если дилер не пуст, активизируем верхнюю карту
-					dealer.Deck.TopCard.Visible = false;
-					dealer.Deck.TopCard.IsDragable = true;
-				}
-			}
-			if (IsWon())
-			{
-				System.Windows.MessageBox.Show("Вы выиграли");
-
-				string name = "no name";
-				GetPlayerNameDialog dlg = new GetPlayerNameDialog();
-				dlg.ShowDialog();
-				if (!string.IsNullOrWhiteSpace(dlg.name))
-				{
-					name = dlg.name;
-				}
-				StreamWriter f = new StreamWriter(Environment.CurrentDirectory + "\\records.txt", true);
-				f.WriteLine("Reversi " + gameShape.MoveCount.ToString() + " " + gameShape.Score.ToString() + " Выигрыш " + name);
-				f.Close();
-				NewGame();
-			}
-			Canvas.SetZIndex(oldDeck, 1);
-			oldDeck = null;
-		}
-
-		void cp_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			cp_MouseLeftButtonDown(sender, e);
 		}
 
 		void cp_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			CardShape current = sender as CardShape;
-			foreach (var d in stack)
+
+			if (current.DeckShape == dealer)
 			{
-				if (d.Deck == current.Card.Deck)
+				gameShape.MoveCount++;
+				foreach (var d in ground)
 				{
-					oldDeck = d;
-					break;
+					if (d.Count > 0 && d.Deck.TopCard.Visible && dealer.Count > 0)
+					{
+						var card = dealer.TopCardShape;
+						dealer.Remove(card);
+						d.Add(card);
+						gameShape.Moves.Add(new GameState(dealer, d, new List<CardShape>() { card }, gameShape.MoveCount));
+						d.Deck.TopCard.Visible = true;
+					}
 				}
-			}
-			foreach (var d in ground)
-			{
-				if (d.Deck == current.Card.Deck)
-				{
-					oldDeck = d;
-					break;
-				}
+				oldDeck = null;
 			}
 
-			if (current.Card.Deck == dealer.Deck)
+			if (oldDeck != null)
 			{
-				//dealer.Remove(current);
-				//cnv.Children.Add(current);
-				
-				if (current.Card.Visible != true)
+				foreach (var d in ground)
 				{
-					current.Card.Visible = true;
-				}
+					if (d.Deck == current.Card.Deck)
+					{
+						if (current.DeckShape.Deck.TopCard.Number == oldDeck.Deck.TopCard.Number)
+						{
+							var firstDeck = ground.IndexOf(current.DeckShape);
+							var secondDeck = ground.IndexOf(oldDeck);
+							if (Math.Abs(secondDeck - firstDeck) == 2)
+							{
+								gameShape.MoveCount++;
+								if (firstDeck > secondDeck)
+								{
+									MakeMove(d, stack, true);
+									MakeMove(ground[firstDeck - 1], stack, true);
+								}
+								else
+								{
+									MakeMove(oldDeck, stack, true);
+									MakeMove(ground[secondDeck - 1], stack, true);
+								}
 
+								if (firstDeck % 7 == 0 || secondDeck % 7 == 0)
+								{
+									for (int i = 0; i < 3; i++)
+									{
+										int k = 0;
+										for (int j = 0; j < 7; j++)
+										{
+											if (ground[(i * 7) + j].Count > 0)
+												k++;
+										}
+										if (k == 1)
+										{
+											for (int j = 0; j < 7; j++)
+											{
+												MakeMove(ground[(i * 7) + j], stack, true);
+											}
+										}
+									}
+								}
+
+								for (int i = 0; i < 3; i++)
+									for (int j = 0; j < 7; j++)
+									{
+										if (ground[(i * 7) + j].Count == 0)
+										{
+											for (int k = j; k < 6; k++)
+												MakeMove(ground[(i * 7) + k + 1], ground[(i * 7) + k]);
+										}
+									}
+								for (int i = 0; i < 3; i++)
+									for (int j = 0; j < 7; j++)
+									{
+										if (ground[(i * 7) + j].Count == 0)
+										{
+											for (int k = j; k < 6; k++)
+												MakeMove(ground[(i * 7) + k + 1], ground[(i * 7) + k]);
+										}
+									}
+							}
+						}
+						break;
+					}
+				}
+				oldDeck = null;
 			}
-			current.IsEnabled = true;
+			else
+			{
+				foreach (var d in ground)
+				{
+					if (d.Deck == current.Card.Deck)
+					{
+						oldDeck = d;
+						break;
+					}
+				}
+			}
 		}
 
 		private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -434,6 +325,5 @@ namespace Napoleon_Exile
 			TotalScore.Text = gameShape.Score.ToString();
 			TotalMoves.Text = gameShape.MoveCount.ToString();
 		}
-
 	}
 }

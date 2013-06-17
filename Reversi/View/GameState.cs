@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,14 +11,14 @@ namespace View
 	{
 		public DekShape From;
 		public DekShape To;
-		public bool NeedFlipBack;
+		public List<CardShape> Cards;
 		public int Score;
 
-		public GameState(DekShape from, DekShape to, bool needflipback, int score)
+		public GameState(DekShape from, DekShape to, List<CardShape> cards, int score)
 		{
 			From = from;
 			To = to;
-			NeedFlipBack = needflipback;
+			Cards = cards;
 			Score = score;
 		}
 	}

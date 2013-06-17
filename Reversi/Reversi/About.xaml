@@ -19,7 +19,7 @@
 					   FontSize="18"
 					   Foreground="Black"
 					   HorizontalAlignment="Center" />
-			<TextBlock Text=" &quot;Гробница Наполеона&quot;"
+			<TextBlock Text=" &quot;Реверси&quot;"
 					   FontFamily="Segoe UI Light"
 					   FontSize="18"
 					   Foreground="Black"

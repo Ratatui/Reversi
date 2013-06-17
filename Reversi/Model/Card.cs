@@ -86,18 +86,6 @@ namespace Model
 			}
 			set
 			{
-				//if (deck.Game != value.Game)
-				//    throw new InvalidOperationException("The new deck must be in the same game like the old deck of the card.");
-
-				//if (deck != value)
-				//{
-				//    deck.Cards.Remove(this);
-				//    deck = value;
-				//    deck.Cards.Add(this);
-
-				//    if (DeckChanged != null)
-				//        DeckChanged(this, null);
-				//}
 				deck = value;
 			}
 		}

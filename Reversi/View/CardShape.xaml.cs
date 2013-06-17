@@ -29,10 +29,6 @@ namespace View
 		private Point oldMousePos;
 		private bool isDrag = false;
 
-		public delegate void CardDragEventHandler(CardShape shape);
-		public event CardDragEventHandler CardDragged;
-		//public event MouseButtonEventHandler CardMouseLeftButtonDown;
-
 		#region Card
 
 		private Card card = null;
@@ -134,7 +130,6 @@ namespace View
 		}
 		#endregion
 
-
 		public CardShape()
 		{
 			InitializeComponent();
@@ -142,42 +137,17 @@ namespace View
 
 		private void imgCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			if (Card.Visible == false)
+			if (Card.IsDragable)
 			{
-				Card.Visible = true;
-			}
-			else
-			{
-				if (Card.IsDragable)
-				{
-					imgCard.CaptureMouse();
-					isDrag = true;
-					oldMousePos = e.GetPosition(LayoutRoot);
-				}
+				imgCard.CaptureMouse();
+				isDrag = true;
+				oldMousePos = e.GetPosition(LayoutRoot);
 			}
 		}
 
 		private void imgCard_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			imgCard_MouseLeftButtonDown(sender, e);
-		}
-
-		private void imgCard_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-		{
-			if (isDrag)
-			{
-				imgCard.ReleaseMouseCapture();
-				isDrag = false;
-				if (CardDragged != null)
-				{
-					CardDragged(this);
-				}
-			}
-		}
-
-		private void imgCard_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
-		{
-			imgCard_MouseLeftButtonUp(sender, e);
 		}
 
 		private void imgCard_MouseMove(object sender, MouseEventArgs e)

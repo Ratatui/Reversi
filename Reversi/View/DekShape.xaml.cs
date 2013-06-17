@@ -51,7 +51,7 @@ namespace View
 		{
 			cards.Add(card);
 			card.DeckShape = this;
-			Canvas.SetTop(card, CardSpace * (cards.Count - 1));
+			Canvas.SetTop(card, CardSpace * 0);
 			Canvas.SetLeft(card, 0);
 			Canvas.SetZIndex(card, cards.Count + 1);
 			LayoutRoot.Children.Add(card);
@@ -84,20 +84,6 @@ namespace View
 		private void rectBorderBack_MouseLeave(object sender, MouseEventArgs e)
 		{
 			rectBorder.Visibility = Visibility.Collapsed;
-		}
-
-		private void rectBorderBack_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-		{
-		}
-
-		private void rectBorderBack_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-		{
-
-		}
-
-		private void rectBorderBack_MouseMove(object sender, MouseEventArgs e)
-		{
-
 		}
 	}
 }

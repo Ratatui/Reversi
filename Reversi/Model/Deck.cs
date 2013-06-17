@@ -31,7 +31,7 @@ namespace Model
 						Cards[Cards.Count - 2].Enabled = false;
 
 					}
-					Cards[Cards.Count - 1].IsDragable = true;
+					Cards[Cards.Count - 1].IsDragable = false;
 					Cards[Cards.Count - 1].Enabled = true;
 
 				}
@@ -50,7 +50,7 @@ namespace Model
 				Card returned = TopCard;
 				if (returned != null)
 				{
-					Cards[Cards.Count - 1].IsDragable = true;
+					Cards[Cards.Count - 1].IsDragable = false;
 					Cards[Cards.Count - 1].Enabled = true;
 				}
 				return returned;

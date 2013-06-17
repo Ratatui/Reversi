@@ -130,7 +130,7 @@
       <Project>{abb5c228-384d-4736-b2bc-7f9c41aecec7}</Project>
       <Name>Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Napoleon\View.csproj">
+    <ProjectReference Include="..\View\View.csproj">
       <Project>{3e002373-ee37-4309-b31d-f8fe06f95c54}</Project>
       <Name>View</Name>
     </ProjectReference>
